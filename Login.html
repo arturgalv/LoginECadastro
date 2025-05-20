@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <div class="container">
+        <h2>Login</h2>
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="email">E-mail:</label>
+                <input type="email" id="email" name="email" required />
+                <div class="error-message" id="emailErro"></div>
+            </div>
+            <div class="form-group">
+                <label for="senha">Senha:</label>
+                <input type="password" id="senha" name="senha" required />
+                <div class="error-message" id="senhaErro"></div>
+            </div>
+            <button type="submit">Entrar</button>
+            <div id="mensagem"></div>
+        </form>
+        <a class="link-cadastro" href="cadastro.html">Criar uma conta</a>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('loginForm');
+            const emailInput = document.getElementById('email');
+            const senhaInput = document.getElementById('senha');
+            const emailErro = document.getElementById('emailErro');
+            const senhaErro = document.getElementById('senhaErro');
+            const mensagemDiv = document.getElementById('mensagem');
+
+            form.addEventListener('submit', (event) => {
+                event.preventDefault();
+                resetarErros();
+
+                const email = emailInput.value.trim();
+                const senha = senhaInput.value.trim();
+
+                let isValid = true;
+
+                if (!email) {
+                    mostrarErro(emailErro, 'Por favor, digite seu e-mail.');
+                    isValid = false;
+                }
+
+                if (!senha) {
+                    mostrarErro(senhaErro, 'Por favor, digite sua senha.');
+                    isValid = false;
+                }
+
+                if (isValid) {
+                    fazerLogin(email, senha);
+                }
+            });
+
+            function resetarErros() {
+                emailErro.textContent = '';
+                senhaErro.textContent = '';
+                mensagemDiv.textContent = '';
+            }
+
+            function mostrarErro(elemento, mensagem) {
+                elemento.textContent = mensagem;
+            }
+
+            function fazerLogin(email, senha) {
+                const usuariosCadastrados = localStorage.getItem('usuarios');
+                let usuarios = usuariosCadastrados ? JSON.parse(usuariosCadastrados) : [];
+
+                const usuario = usuarios.find(user => user.email === email && user.senha === senha);
+
+                if (usuario) {
+                    localStorage.setItem('usuarioLogado', JSON.stringify(usuario));
+                    window.location.href = 'dashboard.html';
+                } else {
+                    mensagemDiv.textContent = 'E-mail ou senha incorretos.';
+                    mensagemDiv.style.color = 'red';
+                }
+            }
+        });
+    </script>
+</body>
+</html>
